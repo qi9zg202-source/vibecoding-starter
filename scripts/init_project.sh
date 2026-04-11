@@ -61,11 +61,7 @@ prompt_value() {
   local __label="$2"
   local __default="${3-}"
   local __input=""
-  if [ -n "$__default" ]; then
-    printf "%s [%s]: " "$__label" "$__default"
-  else
-    printf "%s: " "$__label"
-  fi
+  printf "%s [%s]: " "$__label" "$__default"
   if [ -t 0 ]; then
     read -r __input
   else
@@ -140,7 +136,6 @@ fi
 
 if [ -z "$DISPLAY_NAME" ]; then
   DISPLAY_NAME="$(to_default_display_name "$PROJECT_NAME")"
-  prompt_value DISPLAY_NAME "项目展示名称" "$DISPLAY_NAME"
 fi
 
 if [ -z "$DISPLAY_NAME" ]; then
@@ -148,18 +143,6 @@ if [ -z "$DISPLAY_NAME" ]; then
   exit 1
 fi
 
-if [ "$APP_DIR_FROM_ARG" -eq 0 ]; then
-  prompt_value APP_DIR "主工程目录" "$APP_DIR"
-fi
-if [ "$PRIMARY_OBJECT_FROM_ARG" -eq 0 ]; then
-  prompt_value PRIMARY_OBJECT "默认主对象（页面 / URL / 文件）" "$PRIMARY_OBJECT"
-fi
-if [ "$SECONDARY_OBJECT_FROM_ARG" -eq 0 ]; then
-  prompt_value SECONDARY_OBJECT "第二对象（可空）" "$SECONDARY_OBJECT"
-fi
-if [ "$REPORT_LANGUAGE_FROM_ARG" -eq 0 ]; then
-  prompt_value REPORT_LANGUAGE "结果汇报语言" "$REPORT_LANGUAGE"
-fi
 if [ "$REMOTE_URL_FROM_ARG" -eq 0 ]; then
   prompt_value REMOTE_URL "新的 Git 远端地址（可空）" "$REMOTE_URL"
 fi

@@ -6,7 +6,7 @@
 
 1. clone 到本地
 2. 执行一次初始化脚本
-3. 输入项目名、展示名、默认对象、远端仓库这些必要变量
+3. 只输入项目代号和远端仓库这两项
 4. 让脚本一次性把配置和规则文件写好
 5. 然后直接开始用控制台发任务
 
@@ -19,7 +19,7 @@
 1. `git clone` starter 到本地
 2. 进入新项目目录
 3. 运行 `./scripts/init_project.sh`
-4. 按提示输入项目初始化信息
+4. 只按提示输入两项：项目代号、Git 远端地址
 5. 等脚本自动完成验证
 6. 打开 `index.html`
 7. 用 `Design+Build` 发第一条真实任务
@@ -80,19 +80,22 @@ cd "$PROJECT_NAME"
 ./scripts/init_project.sh
 ```
 
-然后脚本会问你几项必要信息。
+然后脚本只会问你两项。
 
 例如，`homeagent` 这次初始化可以这样输入：
 
 ```text
 项目代号（英文 / 目录名） [homeagent]: homeagent
-项目展示名称 [Homeagent]: HomeAgent
-主工程目录 [app]: app
-默认主对象（页面 / URL / 文件） [http://localhost:3000]: http://localhost:3000
-第二对象（可空） [http://localhost:3000/dashboard]: http://localhost:3000/dashboard
-结果汇报语言 [中文]: 中文
 新的 Git 远端地址（可空） []: git@github.com:qi9zg202-source/homeagent.git
 ```
+
+其余内容都会直接使用默认值：
+
+- 项目展示名称：自动从项目代号推导，例如 `homeagent -> Homeagent`
+- 主工程目录：默认 `app`
+- 默认主对象：默认 `http://localhost:3000`
+- 第二对象：默认 `http://localhost:3000/dashboard`
+- 结果汇报语言：默认 `中文`
 
 ### 第三步：初始化脚本会自动做什么
 
@@ -127,13 +130,13 @@ verify_prompt_builder: PASS
 index.html
 ```
 
-打开后，控制台已经会是 `HomeAgent` 的默认状态，不需要你再手改配置文件。
+打开后，控制台已经会是 `Homeagent` 的默认状态，不需要你再手改配置文件。
 
 ### 第六步：发出第一条真实任务
 
 建议第一次直接这样用：
 
-- 工程：`HomeAgent`
+- 工程：`Homeagent`
 - 模式：`Design+Build`
 
 任务卡可以先填：
@@ -141,7 +144,7 @@ index.html
 **本次任务**
 
 ```text
-初始化 HomeAgent 首页结构，先搭出主导航、工作区和设置入口。
+初始化 Homeagent 首页结构，先搭出主导航、工作区和设置入口。
 ```
 
 **不要改动**
@@ -165,15 +168,10 @@ index.html
 ```bash
 ./scripts/init_project.sh \
   --project-name homeagent \
-  --display-name HomeAgent \
-  --app-dir app \
-  --primary-object http://localhost:3000 \
-  --secondary-object http://localhost:3000/dashboard \
-  --report-language 中文 \
   --remote git@github.com:qi9zg202-source/homeagent.git
 ```
 
-这样脚本会直接完成初始化，不再逐项提问。
+这样脚本会直接完成初始化，不再有任何交互输入。
 
 ## 新项目的正确启动顺序
 
