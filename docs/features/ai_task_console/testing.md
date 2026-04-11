@@ -24,3 +24,14 @@
 4. `Execution Prompt` 正常生成
 5. `Task Card` 正常生成
 6. 高级输出默认折叠
+
+## 初始化链路验证
+
+除了控制台本身，还要验证 starter 初始化链路：
+
+1. 在临时目录 clone 或复制 starter
+2. 运行初始化脚本并传入新项目参数
+3. 确认 `vibecoding.config.js` 已替换成新项目值
+4. 确认 `README.md`、`CLAUDE.md`、`AGENTS.md` 已完成初始化
+5. 再执行一次 `./scripts/verify_prompt_builder.sh`
+6. 最终结果必须为 `PASS`

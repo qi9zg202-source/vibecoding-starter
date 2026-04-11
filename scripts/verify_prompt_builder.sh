@@ -42,10 +42,23 @@ const assert = (condition, message) => {
   await wait(150);
   const { document } = dom.window;
   const text = (node) => (node ? String(node.textContent || '').trim() : '');
+  const config = dom.window.VIBECODING_CONFIG || {};
+  const projects = Array.isArray(config.projects) ? config.projects : [];
+  const modes = Array.isArray(config.modes) ? config.modes : [];
+  const defaultProject = projects.find((item) => item.key === config.defaultProjectKey) || projects[0] || { key: '', objects: [] };
+  const defaultMode = modes.find((item) => item.key === config.defaultModeKey) || modes[0] || { key: '', skills: [], deliverables: [], instructions: [] };
+  const repoProject = projects.find((item) => item.key === 'repo-root') || projects[0] || { key: '', objects: [] };
+  const reviewMode = modes.find((item) => item.key === 'review') || { skills: [], deliverables: [] };
+  const publishMode = modes.find((item) => item.key === 'github-publish') || { instructions: [] };
+  const defaultObjects = Array.isArray(defaultProject.objects) ? defaultProject.objects : [];
+  const repoObjects = Array.isArray(repoProject.objects) ? repoProject.objects : [];
+  const expectedDefaultSelected = defaultObjects.filter((item) => item.defaultSelected).map((item) => item.text);
+  const expectedRepoSelected = repoObjects.filter((item) => item.defaultSelected).map((item) => item.text);
 
   assert(document.querySelector('script[src="./vibecoding.config.js"]'), 'starter 页面未引入独立配置文件');
   assert(dom.window.VIBECODING_CONFIG_SOURCE === 'external', 'starter 外部配置未加载');
-  assert(text(document.getElementById('task-console-page-title')) === 'AI 开发任务控制台', 'starter 控制台标题错误');
+  assert(text(document.getElementById('hero-title')) === String(config.heroTitle || ''), 'starter 顶部标题未按配置渲染');
+  assert(text(document.getElementById('task-console-page-title')) === String(config.consoleTitle || ''), 'starter 控制台标题错误');
 
   const articleOrder = Array.from(document.querySelectorAll('#task-console-card .section-grid > article')).map((node) => node.id);
   assert(articleOrder[0] === 'quick-guide-box', 'starter 推荐用法区块不在首位');
@@ -67,34 +80,49 @@ const assert = (condition, message) => {
   });
 
   const defaultState = summarize();
-  assert(defaultState.project === 'main-app', 'starter 默认工程错误');
-  assert(defaultState.mode === 'design-build', 'starter 默认模式错误');
-  assert(defaultState.objects.some((item) => item.text === 'http://localhost:3000' && item.selected), 'starter 默认对象错误');
-  assert(defaultState.executionPrompt.includes('task-card-executor'), 'starter Design+Build 未生成 task-card-executor');
+  assert(defaultState.project === String(defaultProject.key || ''), 'starter 默认工程错误');
+  assert(defaultState.mode === String(defaultMode.key || ''), 'starter 默认模式错误');
+  expectedDefaultSelected.forEach((itemText) => {
+    assert(defaultState.objects.some((item) => item.text === itemText && item.selected), `starter 默认对象错误: ${itemText}`);
+  });
+  (defaultMode.skills || []).forEach((skill) => {
+    assert(defaultState.executionPrompt.includes(skill), `starter 默认模式缺少 skill: ${skill}`);
+  });
 
   document.querySelector('[data-project-key="repo-root"]')?.click();
   await wait(0);
   const repoState = summarize();
-  assert(repoState.objects.some((item) => item.text.endsWith('/index.html') && item.selected), 'starter repo-root 默认对象错误');
+  expectedRepoSelected.forEach((itemText) => {
+    assert(repoState.objects.some((item) => item.text === itemText && item.selected), `starter repo-root 默认对象错误: ${itemText}`);
+  });
 
   document.querySelector('[data-mode-key="review"]')?.click();
   await wait(0);
   const reviewState = summarize();
-  assert(reviewState.executionPrompt.includes('design-review'), 'starter Review 未生成 design-review');
-  assert(reviewState.deliverables.includes('review_report'), 'starter Review 交付物错误');
+  (reviewMode.skills || []).forEach((skill) => {
+    assert(reviewState.executionPrompt.includes(skill), `starter Review 未生成 skill: ${skill}`);
+  });
+  (reviewMode.deliverables || []).forEach((deliverable) => {
+    assert(reviewState.deliverables.includes(deliverable), `starter Review 交付物错误: ${deliverable}`);
+  });
 
   document.querySelector('[data-mode-key="github-publish"]')?.click();
   await wait(0);
   const publishState = summarize();
-  assert(publishState.executionPrompt.includes('主分支收敛'), 'starter GitHub Publish 输出缺少主分支收敛');
+  (publishMode.instructions || []).forEach((line) => {
+    assert(publishState.executionPrompt.includes(line), `starter GitHub Publish 输出缺少说明: ${line}`);
+  });
 
-  document.querySelector('[data-project-key="main-app"]')?.click();
-  const adminRow = Array.from(document.querySelectorAll('#task-object-table .prompt-object-row')).find((row) => row.dataset.objectText === 'http://localhost:3000/admin');
-  adminRow?.click();
-  await wait(0);
-  const multiState = summarize();
-  assert(multiState.executionPrompt.includes('http://localhost:3000/admin'), 'starter 多选对象后 Execution Prompt 未同步');
-  assert(multiState.taskCard.includes('http://localhost:3000/admin'), 'starter 多选对象后 Task Card 未同步');
+  document.querySelector(`[data-project-key="${defaultProject.key}"]`)?.click();
+  const extraDefaultObject = defaultObjects.find((item) => !item.defaultSelected);
+  if (extraDefaultObject) {
+    const extraRow = Array.from(document.querySelectorAll('#task-object-table .prompt-object-row')).find((row) => row.dataset.objectText === extraDefaultObject.text);
+    extraRow?.click();
+    await wait(0);
+    const multiState = summarize();
+    assert(multiState.executionPrompt.includes(extraDefaultObject.text), `starter 多选对象后 Execution Prompt 未同步: ${extraDefaultObject.text}`);
+    assert(multiState.taskCard.includes(extraDefaultObject.text), `starter 多选对象后 Task Card 未同步: ${extraDefaultObject.text}`);
+  }
 
   console.log('verify_prompt_builder: PASS');
 })();

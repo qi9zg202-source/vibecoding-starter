@@ -1,4 +1,6 @@
 window.VIBECODING_CONFIG = {
+  heroTitle: 'Vibecoding Starter',
+  heroNote: '先运行 ./scripts/init_project.sh 完成初始化，再开始用控制台发任务。',
   pageTitle: 'Vibecoding Starter AI 开发任务控制台',
   consoleTitle: 'AI 开发任务控制台',
   consoleIntro: '这里用于收集本次任务变量，并生成可直接交给 AI 的执行入口。',
