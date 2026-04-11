@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vibecoding Starter</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --border: #d9dde3;
+      --text: #1f2937;
+      --sub: #5b6878;
+      --primary: #0a6ed1;
+      --danger: #bb0000;
+      --success: #107e3e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Text", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(180deg, #f8fafc, var(--bg));
+      color: var(--text);
+    }
+    #layout {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      gap: 12px;
+    }
+    .section-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+    }
+    .section-title {
+      margin: 0 0 10px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    .prompt-span-full,
+    .quick-guide-box,
+    .details-card {
+      grid-column: 1 / -1;
+    }
+    .prompt-builder-note,
+    .prompt-lines-note {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+    .cmd-box,
+    .prompt-lines-box,
+    .prompt-builder-box,
+    .details-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafbfd;
+      padding: 10px;
+    }
+    .cmd-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .cmd-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .cmd-copy-btn {
+      height: 26px;
+      padding: 0 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .cmd-copy-btn.is-success {
+      border-color: var(--success);
+      background: #edf9f1;
+      color: var(--success);
+    }
+    .cmd-copy-btn.is-error {
+      border-color: var(--danger);
+      background: #fff2f2;
+      color: var(--danger);
+    }
+    .quick-guide-box {
+      border-color: #bfd4ea;
+      background: #f5f9ff;
+      padding: 12px;
+    }
+    .quick-guide-title {
+      margin: 0 0 8px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .quick-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 8px;
+    }
+    .quick-guide-step {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      padding: 10px;
+    }
+    .quick-guide-step strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+    .quick-guide-step span {
+      display: block;
+      font-size: 12px;
+      color: var(--sub);
+      line-height: 1.5;
+    }
+    .prompt-lines {
+      display: grid;
+      gap: 8px;
+    }
+    .prompt-line-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-family: Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      text-align: left;
+      cursor: pointer;
+    }
+    .prompt-line-btn.is-selected {
+      border-color: var(--primary);
+      background: #eef5ff;
+    }
+    .prompt-builder-fields {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .prompt-builder-field {
+      display: grid;
+      gap: 6px;
+    }
+    .prompt-builder-label {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .prompt-builder-input,
+    .prompt-builder-output {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      font-family: Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    .prompt-builder-input {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .console-summary-panel {
+      margin: 0 0 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      font-size: 12px;
+      line-height: 1.55;
+      color: var(--sub);
+    }
+    .protocol-list {
+      margin: 0;
+      padding-left: 18px;
+      display: grid;
+      gap: 6px;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .prompt-object-table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .prompt-object-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+      font-family: Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+    .prompt-object-table th,
+    .prompt-object-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+      word-break: break-all;
+    }
+    .prompt-object-table th {
+      background: #f5f7fb;
+      color: var(--sub);
+      font-weight: 600;
+    }
+    .prompt-object-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .prompt-object-row {
+      cursor: pointer;
+    }
+    .prompt-object-row.is-selected {
+      background: #eef5ff;
+      box-shadow: inset 3px 0 0 var(--primary);
+    }
+    .prompt-object-checkbox {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--primary);
+      pointer-events: none;
+    }
+    .details-card > summary {
+      cursor: pointer;
+      list-style: none;
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+    }
+    .details-card > summary::-webkit-details-marker {
+      display: none;
+    }
+    .details-card[open] > summary {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <main id="layout">
+    <section class="section-card">
+      <h1 class="section-title">Vibecoding Starter</h1>
+      <p class="prompt-builder-note">这是一份可直接复制到新仓库的起步骨架。先修改 `vibecoding.config.js`、`CLAUDE.md`、`AGENTS.md`，再开始用控制台发任务。</p>
+    </section>
+
+    <section id="task-console-card" class="section-card">
+      <h2 id="task-console-page-title" class="section-title">AI 开发任务控制台</h2>
+      <p id="task-console-intro" class="prompt-builder-note">这里不再强调 Prompt 编号，而是收束为“工程 + 执行模式 + 任务卡 + 固定协议 + 输出”的控制台结构。固定规则保持只读，当前任务只填写变量。</p>
+      <div class="section-grid">
+        <article id="quick-guide-box" class="quick-guide-box">
+          <h3 id="quick-guide-title" class="quick-guide-title">你现在就这样用</h3>
+          <div id="quick-guide-grid" class="quick-guide-grid"></div>
+        </article>
+
+        <article id="project-switch-box" class="prompt-lines-box prompt-span-full">
+          <div class="cmd-head">
+            <div class="cmd-title">工程</div>
+          </div>
+          <p id="project-switch-note" class="prompt-lines-note"></p>
+          <div id="project-switch-lines" class="prompt-lines"></div>
+        </article>
+
+        <article id="task-mode-box" class="prompt-lines-box prompt-span-full">
+          <div class="cmd-head">
+            <div id="task-mode-title" class="cmd-title">执行模式</div>
+          </div>
+          <p id="task-mode-note" class="prompt-lines-note"></p>
+          <div id="task-mode-lines" class="prompt-lines"></div>
+        </article>
+
+        <article id="task-console-box" class="prompt-builder-box prompt-span-full">
+          <div class="cmd-head">
+            <div class="cmd-title">任务卡</div>
+          </div>
+          <p id="task-console-box-note" class="prompt-builder-note"></p>
+          <div id="mode-skill-summary" class="console-summary-panel"></div>
+          <div class="prompt-builder-fields">
+            <label class="prompt-builder-field" for="task-console-task-input">
+              <span class="prompt-builder-label">本次任务</span>
+              <textarea id="task-console-task-input" class="prompt-builder-input" placeholder="例如：为新项目首页建立第一版信息架构，并补控制台默认任务对象..."></textarea>
+            </label>
+            <div class="prompt-builder-field">
+              <span class="prompt-builder-label">任务对象（页面 / URL / 文件）</span>
+              <p id="task-object-helper" class="prompt-lines-note"></p>
+              <div class="prompt-object-table-wrap">
+                <table id="task-object-table" class="prompt-object-table">
+                  <thead>
+                    <tr>
+                      <th style="width:72px">选择</th>
+                      <th style="width:88px">类型</th>
+                      <th>对象</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+            <label class="prompt-builder-field" for="task-console-priority-input">
+              <span class="prompt-builder-label">优先级 / 风险级别（选填）</span>
+              <textarea id="task-console-priority-input" class="prompt-builder-input" placeholder="例如：高优先级，中风险"></textarea>
+            </label>
+            <label class="prompt-builder-field" for="task-console-guard-input">
+              <span class="prompt-builder-label">不要改什么</span>
+              <textarea id="task-console-guard-input" class="prompt-builder-input" placeholder="例如：不要改现有路由，不要改公共接口"></textarea>
+            </label>
+            <label class="prompt-builder-field" for="task-console-acceptance-input">
+              <span class="prompt-builder-label">验收标准</span>
+              <textarea id="task-console-acceptance-input" class="prompt-builder-input" placeholder="例如：页面实际打开验证通过，主流程清楚，无错位"></textarea>
+            </label>
+          </div>
+        </article>
+
+        <article id="control-protocol-box" class="cmd-box prompt-span-full">
+          <div class="cmd-head">
+            <div class="cmd-title">固定协议</div>
+          </div>
+          <p id="control-protocol-note" class="prompt-lines-note"></p>
+          <ul id="control-protocol-preview" class="protocol-list"></ul>
+        </article>
+
+        <article id="execution-prompt-box" class="cmd-box">
+          <div class="cmd-head">
+            <div class="cmd-title">Execution Prompt</div>
+            <button id="btn-copy-execution-prompt" class="cmd-copy-btn" type="button">复制</button>
+          </div>
+          <p id="execution-prompt-note" class="prompt-lines-note"></p>
+          <pre id="execution-prompt-output" class="prompt-builder-output"></pre>
+        </article>
+
+        <details id="advanced-output-box" class="details-card">
+          <summary>高级输出：Task Card / Deliverables</summary>
+          <div class="section-grid">
+            <article class="cmd-box">
+              <div class="cmd-head">
+                <div class="cmd-title">Task Card</div>
+                <button id="btn-copy-task-card" class="cmd-copy-btn" type="button">复制</button>
+              </div>
+              <pre id="task-card-output" class="prompt-builder-output"></pre>
+            </article>
+            <article class="cmd-box">
+              <div class="cmd-head">
+                <div class="cmd-title">Deliverables Checklist</div>
+                <button id="btn-copy-deliverables" class="cmd-copy-btn" type="button">复制</button>
+              </div>
+              <pre id="deliverables-output" class="prompt-builder-output"></pre>
+            </article>
+          </div>
+        </details>
+
+        <details id="special-templates-box" class="details-card">
+          <summary>专项模板（按需展开）</summary>
+          <div class="section-grid" style="margin-top:10px;">
+            <article id="prompt-arch-audit-box" class="prompt-lines-box prompt-span-full">
+              <div class="cmd-head">
+                <div class="cmd-title">专项模板 · 架构状态体检</div>
+                <button id="btn-copy-prompt-arch-audit" class="cmd-copy-btn" type="button">复制模板</button>
+              </div>
+              <p class="prompt-lines-note">用于单独发起当前项目的信息架构或状态管理体检。</p>
+              <div class="prompt-lines">
+                <button class="prompt-line-btn" type="button" data-copy-text="请先阅读当前项目规则和本次任务卡，然后以架构师视角审查当前状态组织、信息层级和模块边界。请明确指出职责不清、耦合过高、命名混乱和扩展性差的问题，并输出重构建议。">📋 通用架构体检模板</button>
+              </div>
+            </article>
+            <article id="prompt-design-md-box" class="prompt-lines-box prompt-span-full">
+              <div class="cmd-head">
+                <div class="cmd-title">专项模板 · 设计规范驱动 UI</div>
+              </div>
+              <p class="prompt-lines-note">当项目已有设计规范时，可单独发起“按规范重构 UI”的任务。</p>
+              <div class="prompt-lines">
+                <button class="prompt-line-btn" type="button" data-copy-text="请先阅读当前项目的设计规范，再基于规范重构现有页面。保持功能不变，但统一颜色、间距、字体、组件风格和信息层级。">🎨 按设计规范重构现有页面</button>
+              </div>
+            </article>
+          </div>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <script src="./vibecoding.config.js"></script>
+  <script>
+    const btnCopyExecutionPrompt = document.getElementById('btn-copy-execution-prompt');
+    const btnCopyTaskCard = document.getElementById('btn-copy-task-card');
+    const btnCopyDeliverables = document.getElementById('btn-copy-deliverables');
+    const btnCopyPromptArchAudit = document.getElementById('btn-copy-prompt-arch-audit');
+    const copyPromptLineButtons = document.querySelectorAll('#prompt-arch-audit-box .prompt-line-btn, #prompt-design-md-box .prompt-line-btn');
+    const taskConsolePageTitle = document.getElementById('task-console-page-title');
+    const taskConsoleIntro = document.getElementById('task-console-intro');
+    const quickGuideTitle = document.getElementById('quick-guide-title');
+    const quickGuideGrid = document.getElementById('quick-guide-grid');
+    const projectSwitchNote = document.getElementById('project-switch-note');
+    const projectSwitchLines = document.getElementById('project-switch-lines');
+    const modeSwitchNote = document.getElementById('task-mode-note');
+    const modeSwitchLines = document.getElementById('task-mode-lines');
+    const taskConsoleBoxNote = document.getElementById('task-console-box-note');
+    const taskConsoleTaskInput = document.getElementById('task-console-task-input');
+    const taskObjectHelper = document.getElementById('task-object-helper');
+    const taskObjectTableBody = document.querySelector('#task-object-table tbody');
+    const taskConsolePriorityInput = document.getElementById('task-console-priority-input');
+    const taskConsoleGuardInput = document.getElementById('task-console-guard-input');
+    const taskConsoleAcceptanceInput = document.getElementById('task-console-acceptance-input');
+    const modeSkillSummary = document.getElementById('mode-skill-summary');
+    const controlProtocolNote = document.getElementById('control-protocol-note');
+    const controlProtocolPreview = document.getElementById('control-protocol-preview');
+    const executionPromptNote = document.getElementById('execution-prompt-note');
+    const executionPromptOutput = document.getElementById('execution-prompt-output');
+    const taskCardOutput = document.getElementById('task-card-output');
+    const deliverablesOutput = document.getElementById('deliverables-output');
+
+    const defaultConsoleConfig = {
+      pageTitle: '你的项目名 AI 开发任务控制台',
+      consoleTitle: 'AI 开发任务控制台',
+      consoleIntro: '这里用于收集本次任务变量，并生成可直接交给 AI 的执行入口。',
+      quickGuideTitle: '你现在就这样用',
+      quickGuideSteps: [
+        { title: '1. 选工程', description: '先切到当前要工作的工程。' },
+        { title: '2. 选模式', description: '默认先用 Design+Build；只审查时再切 Review。' },
+        { title: '3. 填任务卡', description: '至少填本次任务、不要改什么、验收标准。' },
+        { title: '4. 复制 Execution Prompt', description: '直接复制主输出发给 AI。' },
+      ],
+      projectSwitchNote: '切换工程后，任务对象会自动跟着切换。',
+      modeSwitchNote: '不同模式会生成不同的执行 Prompt、Task Card 和交付物。',
+      taskConsoleNote: '这里只填写本次任务变量，固定规则保持只读。',
+      controlProtocolNote: '固定协议只展示，不和本次任务输入混写。',
+      executionPromptNote: '这是主输出，直接复制发给 AI。',
+      fixedProtocolLines: [
+        '所有设计实现都先 plan。',
+        'plan 完成后先更新设计文档和测试文档。',
+        '再进行实现，并在完成后做实际验证。',
+      ],
+      baseExecutionPrefix: `所有开发遵循项目规范,先读取仓库根目录的 CLAUDE.md。
+所有设计实现都先 plan，plan 后先更新设计文档和测试文档，再进行实现。
+除非遇到不可逆操作、缺少关键输入、或存在重大风险，否则中间不要打断任务。`,
+      standards: [],
+      defaultProjectKey: 'main-app',
+      defaultModeKey: 'design-build',
+      projects: [
+        {
+          key: 'repo-root',
+          name: '仓库根目录',
+          switchText: '切换到工程 到:/absolute/path/to/your-project',
+          objects: [
+            { type: '文件', text: '/absolute/path/to/your-project/index.html', defaultSelected: true },
+            { type: '文档', text: '/absolute/path/to/your-project/docs/features/ai_task_console/design.md' },
+            { type: '文档', text: '/absolute/path/to/your-project/docs/features/ai_task_console/testing.md' },
+          ],
+        },
+        {
+          key: 'main-app',
+          name: '主工程',
+          switchText: '切换到工程 到:/absolute/path/to/your-project/app',
+          objects: [
+            { type: '页面', text: 'http://localhost:3000', defaultSelected: true },
+            { type: '页面', text: 'http://localhost:3000/admin' },
+          ],
+        },
+      ],
+      modes: [
+        {
+          key: 'review',
+          label: 'Review',
+          summary: '只做审查，不直接进入实现。',
+          skills: ['design-review'],
+          instructions: [
+            '先审查当前设计和任务定义。',
+            '明确指出不清楚、不专业或不利于交付的地方。',
+            '给出下一版重构建议。',
+            '不要直接开始实现。',
+          ],
+          deliverables: ['review_report', 'redesign_recommendation'],
+        },
+        {
+          key: 'design-build',
+          label: 'Design+Build',
+          summary: '走完整交付链路：plan -> 文档 -> 实现 -> 验证。',
+          skills: ['task-card-executor', 'ui-delivery-verifier（页面 / 交互任务）'],
+          instructions: [
+            '先基于任务卡输出 plan。',
+            '先更新设计文档和测试文档。',
+            '再进行实现；如果方案调整，先同步文档。',
+            '完成后执行验证，并更新 MEMORY.md。',
+          ],
+          deliverables: ['design_doc', 'test_doc', 'implementation', 'verification', 'memory_record'],
+        },
+        {
+          key: 'docs-only',
+          label: 'Docs Only',
+          summary: '只更新文档，不进行代码实现。',
+          skills: ['task-card-executor'],
+          instructions: [
+            '先输出 plan，但只围绕文档和规范更新。',
+            '只更新设计文档、测试文档和 MEMORY.md。',
+            '不要进行代码实现。',
+          ],
+          deliverables: ['design_doc', 'test_doc', 'memory_record'],
+        },
+        {
+          key: 'github-publish',
+          label: 'GitHub Publish',
+          summary: '只做发布收尾。',
+          skills: ['task-card-executor'],
+          instructions: [
+            '确认当前变更已经完成验证。',
+            '提交并推送当前变更。',
+            '执行主分支收敛，并保持本地与 GitHub 一致。',
+          ],
+          deliverables: ['git_commit', 'git_push', 'main_sync', 'publish_verification'],
+        },
+      ],
+    };
+
+    const rawConsoleConfig = window.VIBECODING_CONFIG || {};
+    const consoleConfig = {
+      ...defaultConsoleConfig,
+      ...rawConsoleConfig,
+      quickGuideSteps: Array.isArray(rawConsoleConfig.quickGuideSteps) && rawConsoleConfig.quickGuideSteps.length ? rawConsoleConfig.quickGuideSteps : defaultConsoleConfig.quickGuideSteps,
+      fixedProtocolLines: Array.isArray(rawConsoleConfig.fixedProtocolLines) && rawConsoleConfig.fixedProtocolLines.length ? rawConsoleConfig.fixedProtocolLines : defaultConsoleConfig.fixedProtocolLines,
+      standards: Array.isArray(rawConsoleConfig.standards) ? rawConsoleConfig.standards : defaultConsoleConfig.standards,
+      projects: Array.isArray(rawConsoleConfig.projects) && rawConsoleConfig.projects.length ? rawConsoleConfig.projects : defaultConsoleConfig.projects,
+      modes: Array.isArray(rawConsoleConfig.modes) && rawConsoleConfig.modes.length ? rawConsoleConfig.modes : defaultConsoleConfig.modes,
+    };
+    const projectDefinitions = consoleConfig.projects.map((project) => ({ ...project, objects: Array.isArray(project.objects) ? project.objects : [] }));
+    const modeDefinitions = consoleConfig.modes.map((mode) => ({ ...mode, skills: Array.isArray(mode.skills) ? mode.skills : [], instructions: Array.isArray(mode.instructions) ? mode.instructions : [], deliverables: Array.isArray(mode.deliverables) ? mode.deliverables : [] }));
+    const projectConfigs = Object.fromEntries(projectDefinitions.map((project) => [project.key, project]));
+    const modeConfigs = Object.fromEntries(modeDefinitions.map((mode) => [mode.key, mode]));
+    const fixedProtocolLines = consoleConfig.fixedProtocolLines;
+    const standards = consoleConfig.standards;
+    const baseExecutionPrefix = consoleConfig.baseExecutionPrefix;
+    let selectedProjectKey = projectConfigs[consoleConfig.defaultProjectKey] ? consoleConfig.defaultProjectKey : (projectDefinitions[0]?.key || '');
+    let selectedModeKey = modeConfigs[consoleConfig.defaultModeKey] ? consoleConfig.defaultModeKey : (modeDefinitions[0]?.key || '');
+
+    const normalizeText = (text) => String(text || '').replace(/\r\n?/g, '\n').trim();
+    const splitLines = (text) => normalizeText(text).split('\n').map((line) => line.trim()).filter(Boolean);
+    const yamlQuote = (text) => JSON.stringify(String(text || ''));
+    const getTaskObjectRows = () => Array.from(taskObjectTableBody?.querySelectorAll('.prompt-object-row') || []);
+
+    const fallbackCopyText = (text) => {
+      const tempTextarea = document.createElement('textarea');
+      tempTextarea.value = text;
+      tempTextarea.setAttribute('readonly', 'readonly');
+      tempTextarea.style.position = 'fixed';
+      tempTextarea.style.top = '-9999px';
+      tempTextarea.style.left = '-9999px';
+      document.body.appendChild(tempTextarea);
+      tempTextarea.select();
+      tempTextarea.setSelectionRange(0, tempTextarea.value.length);
+      const copied = document.execCommand('copy');
+      document.body.removeChild(tempTextarea);
+      if (!copied) {
+        throw new Error('浏览器未允许复制');
+      }
+    };
+
+    const copyText = async (text) => {
+      const normalizedText = String(text || '').trim();
+      if (!normalizedText) {
+        throw new Error('没有可复制的内容');
+      }
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        try {
+          await navigator.clipboard.writeText(normalizedText);
+          return;
+        } catch (error) {
+          console.warn('navigator.clipboard 写入失败，尝试后备复制：', error);
+        }
+      }
+      fallbackCopyText(normalizedText);
+    };
+
+    const showCopyButtonFeedback = (button, { success = true, successText = '已复制', errorText = '复制失败', duration = 1400 } = {}) => {
+      if (!button) {
+        return;
+      }
+      const originalText = button.dataset.originalLabel || button.textContent;
+      button.dataset.originalLabel = originalText;
+      button.textContent = success ? successText : errorText;
+      button.classList.remove('is-success', 'is-error');
+      button.classList.add(success ? 'is-success' : 'is-error');
+      window.clearTimeout(Number(button.dataset.feedbackTimer || 0));
+      const timer = window.setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('is-success', 'is-error');
+        button.dataset.feedbackTimer = '';
+      }, duration);
+      button.dataset.feedbackTimer = String(timer);
+    };
+
+    const setTaskObjectRowSelected = (row, selected) => {
+      row.classList.toggle('is-selected', selected);
+      row.setAttribute('aria-selected', selected ? 'true' : 'false');
+      const checkbox = row.querySelector('.prompt-object-checkbox');
+      if (checkbox) {
+        checkbox.checked = selected;
+      }
+    };
+
+    const getSelectedProjectConfig = () => projectConfigs[selectedProjectKey] || projectDefinitions[0] || { name: '当前工程', switchText: '', objects: [] };
+    const getSelectedModeConfig = () => modeConfigs[selectedModeKey] || modeDefinitions[0] || { label: 'Design+Build', summary: '', skills: [], instructions: [], deliverables: [] };
+    const getSelectedTaskObjects = () => getTaskObjectRows().filter((row) => row.classList.contains('is-selected')).map((row) => String(row.dataset.objectText || '').trim()).filter(Boolean);
+
+    const renderQuickGuide = () => {
+      document.title = consoleConfig.pageTitle || document.title;
+      taskConsolePageTitle.textContent = consoleConfig.consoleTitle;
+      taskConsoleIntro.textContent = consoleConfig.consoleIntro;
+      quickGuideTitle.textContent = consoleConfig.quickGuideTitle;
+      projectSwitchNote.textContent = consoleConfig.projectSwitchNote;
+      modeSwitchNote.textContent = consoleConfig.modeSwitchNote;
+      taskConsoleBoxNote.textContent = consoleConfig.taskConsoleNote;
+      controlProtocolNote.textContent = consoleConfig.controlProtocolNote;
+      executionPromptNote.textContent = consoleConfig.executionPromptNote;
+      quickGuideGrid.innerHTML = '';
+      consoleConfig.quickGuideSteps.forEach((step) => {
+        const item = document.createElement('div');
+        item.className = 'quick-guide-step';
+        const title = document.createElement('strong');
+        title.textContent = step.title;
+        const description = document.createElement('span');
+        description.textContent = step.description;
+        item.append(title, description);
+        quickGuideGrid.appendChild(item);
+      });
+    };
+
+    const renderProjectButtons = () => {
+      projectSwitchLines.innerHTML = '';
+      projectDefinitions.forEach((project) => {
+        const button = document.createElement('button');
+        button.className = 'prompt-line-btn';
+        if (project.key === selectedProjectKey) {
+          button.classList.add('is-selected');
+        }
+        button.type = 'button';
+        button.dataset.projectKey = project.key;
+        button.dataset.copyText = project.switchText || '';
+        button.setAttribute('aria-pressed', String(project.key === selectedProjectKey));
+        button.textContent = project.name;
+        projectSwitchLines.appendChild(button);
+      });
+    };
+
+    const renderModeButtons = () => {
+      modeSwitchLines.innerHTML = '';
+      modeDefinitions.forEach((mode) => {
+        const button = document.createElement('button');
+        button.className = 'prompt-line-btn';
+        if (mode.key === selectedModeKey) {
+          button.classList.add('is-selected');
+        }
+        button.type = 'button';
+        button.dataset.modeKey = mode.key;
+        button.setAttribute('aria-pressed', String(mode.key === selectedModeKey));
+        button.textContent = mode.label;
+        modeSwitchLines.appendChild(button);
+      });
+    };
+
+    const renderProtocolPreview = () => {
+      controlProtocolPreview.innerHTML = '';
+      fixedProtocolLines.forEach((line) => {
+        const item = document.createElement('li');
+        item.textContent = line;
+        controlProtocolPreview.appendChild(item);
+      });
+    };
+
+    const updateTaskObjectHelper = (projectName, objects) => {
+      const defaults = objects.filter((item) => item.defaultSelected).map((item) => item.text);
+      taskObjectHelper.textContent = `任务对象已随 ${projectName} 自动切换；直接单击行即可选中或取消选中，支持多选。当前默认选中 ${defaults.join('、') || '无默认对象'}。`;
+    };
+
+    const renderTaskObjectTable = () => {
+      const projectConfig = getSelectedProjectConfig();
+      taskObjectTableBody.innerHTML = '';
+      projectConfig.objects.forEach((item) => {
+        const row = document.createElement('tr');
+        row.className = 'prompt-object-row';
+        row.dataset.objectText = item.text;
+        row.setAttribute('tabindex', '0');
+        const selectCell = document.createElement('td');
+        const checkbox = document.createElement('input');
+        checkbox.className = 'prompt-object-checkbox';
+        checkbox.type = 'checkbox';
+        checkbox.setAttribute('aria-label', `选择 ${item.text}`);
+        selectCell.appendChild(checkbox);
+        const typeCell = document.createElement('td');
+        typeCell.textContent = item.type;
+        const textCell = document.createElement('td');
+        textCell.textContent = item.text;
+        row.append(selectCell, typeCell, textCell);
+        taskObjectTableBody.appendChild(row);
+        setTaskObjectRowSelected(row, Boolean(item.defaultSelected));
+      });
+      updateTaskObjectHelper(projectConfig.name || '当前工程', projectConfig.objects || []);
+    };
+
+    const getConsoleState = () => {
+      const projectConfig = getSelectedProjectConfig();
+      const modeConfig = getSelectedModeConfig();
+      return {
+        projectName: projectConfig.name || '当前工程',
+        projectSwitchText: projectConfig.switchText || '',
+        modeLabel: modeConfig.label,
+        modeSummary: modeConfig.summary,
+        skills: modeConfig.skills,
+        instructions: modeConfig.instructions,
+        deliverables: modeConfig.deliverables,
+        taskText: normalizeText(taskConsoleTaskInput.value) || '“请在这里输入本次需求内容”',
+        objectLines: getSelectedTaskObjects(),
+        priorityText: normalizeText(taskConsolePriorityInput.value) || '普通优先级，按当前模式执行',
+        constraintLines: splitLines(taskConsoleGuardInput.value).length ? splitLines(taskConsoleGuardInput.value) : ['保持现有信息架构、路由与非目标功能不变'],
+        acceptanceLines: splitLines(taskConsoleAcceptanceInput.value).length ? splitLines(taskConsoleAcceptanceInput.value) : ['按固定完成标准执行，并完成当前模式对应的交付物验证'],
+      };
+    };
+
+    const buildExecutionPrompt = (state) => {
+      return [
+        baseExecutionPrefix,
+        state.projectSwitchText,
+        `执行模式：${state.modeLabel}`,
+        `建议调用 skills：\n- ${state.skills.join('\n- ')}`,
+        `本次任务：\n${state.taskText}`,
+        state.objectLines.length ? `任务对象（页面 / URL / 文件）：\n${state.objectLines.join('\n')}` : '',
+        `优先级 / 风险级别：\n${state.priorityText}`,
+        `不要改动：\n${state.constraintLines.join('\n')}`,
+        `验收标准：\n${state.acceptanceLines.join('\n')}`,
+        `本模式执行要求：\n${state.instructions.map((line, index) => `${index + 1}. ${line}`).join('\n')}`,
+        `本次交付物：\n- ${state.deliverables.join('\n- ')}`,
+      ].filter(Boolean).join('\n\n');
+    };
+
+    const buildTaskCard = (state) => {
+      const objectLines = state.objectLines.length ? state.objectLines : ['未选择对象'];
+      const standardsBlock = standards.length
+        ? ['standards:', ...standards.map((line) => `  - ${yamlQuote(line)}`)]
+        : ['standards: []'];
+      return [
+        `project: ${yamlQuote(state.projectName)}`,
+        `mode: ${yamlQuote(state.modeLabel)}`,
+        'task: |',
+        ...state.taskText.split('\n').map((line) => `  ${line}`),
+        'objects:',
+        ...objectLines.map((line) => `  - ${yamlQuote(line)}`),
+        `priority: ${yamlQuote(state.priorityText)}`,
+        'constraints:',
+        ...state.constraintLines.map((line) => `  - ${yamlQuote(line)}`),
+        'acceptance:',
+        ...state.acceptanceLines.map((line) => `  - ${yamlQuote(line)}`),
+        ...standardsBlock,
+        'deliverables:',
+        ...state.deliverables.map((line) => `  - ${yamlQuote(line)}`),
+      ].join('\n');
+    };
+
+    const buildDeliverablesChecklist = (state) => {
+      return [
+        `模式：${state.modeLabel}`,
+        `模式说明：${state.modeSummary}`,
+        '',
+        '本次应交付：',
+        ...state.deliverables.map((item) => `- ${item}`),
+        '',
+        '调用 skills：',
+        ...state.skills.map((item) => `- ${item}`),
+        '',
+        '固定门禁：',
+        ...fixedProtocolLines.map((line) => `- ${line}`),
+      ].join('\n');
+    };
+
+    const renderConsoleOutputs = () => {
+      const state = getConsoleState();
+      modeSkillSummary.textContent = `当前模式：${state.modeLabel}。${state.modeSummary} 默认使用 ${state.skills.join('、')}。`;
+      executionPromptOutput.textContent = buildExecutionPrompt(state);
+      taskCardOutput.textContent = buildTaskCard(state);
+      deliverablesOutput.textContent = buildDeliverablesChecklist(state);
+    };
+
+    const bindCopyButton = (button, getText) => {
+      if (!button) {
+        return;
+      }
+      button.addEventListener('click', async () => {
+        try {
+          await copyText(getText());
+          showCopyButtonFeedback(button, { success: true, successText: '已复制' });
+        } catch (error) {
+          showCopyButtonFeedback(button, { success: false, errorText: '复制失败', duration: 1800 });
+        }
+      });
+    };
+
+    bindCopyButton(btnCopyExecutionPrompt, () => executionPromptOutput.textContent);
+    bindCopyButton(btnCopyTaskCard, () => taskCardOutput.textContent);
+    bindCopyButton(btnCopyDeliverables, () => deliverablesOutput.textContent);
+    bindCopyButton(btnCopyPromptArchAudit, () => document.querySelector('#prompt-arch-audit-box .prompt-line-btn')?.dataset.copyText || '');
+
+    copyPromptLineButtons.forEach((button) => {
+      button.addEventListener('click', async () => {
+        await copyText(button.dataset.copyText || button.textContent);
+        button.classList.add('is-selected');
+        window.setTimeout(() => button.classList.remove('is-selected'), 800);
+      });
+    });
+
+    projectSwitchLines.addEventListener('click', (event) => {
+      const button = event.target.closest('.prompt-line-btn');
+      if (!button) {
+        return;
+      }
+      selectedProjectKey = button.dataset.projectKey || selectedProjectKey;
+      renderProjectButtons();
+      renderTaskObjectTable();
+      renderConsoleOutputs();
+    });
+
+    modeSwitchLines.addEventListener('click', (event) => {
+      const button = event.target.closest('.prompt-line-btn');
+      if (!button) {
+        return;
+      }
+      selectedModeKey = button.dataset.modeKey || selectedModeKey;
+      renderModeButtons();
+      renderConsoleOutputs();
+    });
+
+    taskObjectTableBody.addEventListener('click', (event) => {
+      const row = event.target.closest('.prompt-object-row');
+      if (!row) {
+        return;
+      }
+      setTaskObjectRowSelected(row, !row.classList.contains('is-selected'));
+      renderConsoleOutputs();
+    });
+
+    taskObjectTableBody.addEventListener('keydown', (event) => {
+      const row = event.target.closest('.prompt-object-row');
+      if (!row || (event.key !== 'Enter' && event.key !== ' ')) {
+        return;
+      }
+      event.preventDefault();
+      setTaskObjectRowSelected(row, !row.classList.contains('is-selected'));
+      renderConsoleOutputs();
+    });
+
+    [taskConsoleTaskInput, taskConsolePriorityInput, taskConsoleGuardInput, taskConsoleAcceptanceInput].forEach((input) => {
+      input.addEventListener('input', renderConsoleOutputs);
+    });
+
+    renderQuickGuide();
+    renderProjectButtons();
+    renderModeButtons();
+    renderProtocolPreview();
+    renderTaskObjectTable();
+    renderConsoleOutputs();
+  </script>
+</body>
+</html>
