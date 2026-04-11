@@ -1,7 +1,5 @@
 window.VIBECODING_CONFIG = {
-  heroTitle: 'Vibecoding Starter',
-  heroNote: '先运行 ./scripts/init_project.sh 完成初始化，再开始用控制台发任务。',
-  pageTitle: 'Vibecoding Starter AI 开发任务控制台',
+  pageTitle: '你的项目名 AI 开发任务控制台',
   consoleTitle: 'AI 开发任务控制台',
   consoleIntro: '这里用于收集本次任务变量，并生成可直接交给 AI 的执行入口。',
   quickGuideTitle: '你现在就这样用',
@@ -31,17 +29,17 @@ window.VIBECODING_CONFIG = {
     {
       key: 'repo-root',
       name: '仓库根目录',
-      switchText: '切换到工程 到:/Users/beckliu/Documents/0agentproject2026/job/px/vibecoding-starter',
+      switchText: '切换到工程 到:/absolute/path/to/your-project',
       objects: [
-        { type: '文件', text: '/Users/beckliu/Documents/0agentproject2026/job/px/vibecoding-starter/index.html', defaultSelected: true },
-        { type: '文档', text: '/Users/beckliu/Documents/0agentproject2026/job/px/vibecoding-starter/docs/features/ai_task_console/design.md' },
-        { type: '文档', text: '/Users/beckliu/Documents/0agentproject2026/job/px/vibecoding-starter/docs/features/ai_task_console/testing.md' },
+        { type: '文件', text: '/absolute/path/to/your-project/index.html', defaultSelected: true },
+        { type: '文档', text: '/absolute/path/to/your-project/docs/features/ai_task_console/design.md' },
+        { type: '文档', text: '/absolute/path/to/your-project/docs/features/ai_task_console/testing.md' },
       ],
     },
     {
       key: 'main-app',
-      name: 'Vibecoding Starter',
-      switchText: '切换到工程 到:/Users/beckliu/Documents/0agentproject2026/job/px/vibecoding-starter/app',
+      name: '主工程',
+      switchText: '切换到工程 到:/absolute/path/to/your-project/app',
       objects: [
         { type: '页面', text: 'http://localhost:3000', defaultSelected: true },
         { type: '页面', text: 'http://localhost:3000/admin' },

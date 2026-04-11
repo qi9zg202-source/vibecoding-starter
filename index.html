@@ -262,8 +262,8 @@
 <body>
   <main id="layout">
     <section class="section-card">
-      <h1 id="hero-title" class="section-title">Vibecoding Starter</h1>
-      <p id="hero-note" class="prompt-builder-note">这是一份可直接复制到新仓库的起步骨架。先运行 `./scripts/init_project.sh` 完成初始化，再开始用控制台发任务。</p>
+      <h1 class="section-title">Vibecoding Starter</h1>
+      <p class="prompt-builder-note">这是一份可直接复制到新仓库的起步骨架。先修改 `vibecoding.config.js`、`CLAUDE.md`、`AGENTS.md`，再开始用控制台发任务。</p>
     </section>
 
     <section id="task-console-card" class="section-card">
@@ -405,8 +405,6 @@
     const btnCopyDeliverables = document.getElementById('btn-copy-deliverables');
     const btnCopyPromptArchAudit = document.getElementById('btn-copy-prompt-arch-audit');
     const copyPromptLineButtons = document.querySelectorAll('#prompt-arch-audit-box .prompt-line-btn, #prompt-design-md-box .prompt-line-btn');
-    const heroTitle = document.getElementById('hero-title');
-    const heroNote = document.getElementById('hero-note');
     const taskConsolePageTitle = document.getElementById('task-console-page-title');
     const taskConsoleIntro = document.getElementById('task-console-intro');
     const quickGuideTitle = document.getElementById('quick-guide-title');
@@ -431,8 +429,6 @@
     const deliverablesOutput = document.getElementById('deliverables-output');
 
     const defaultConsoleConfig = {
-      heroTitle: '你的项目名',
-      heroNote: '先运行 ./scripts/init_project.sh 完成初始化，再开始用控制台发任务。',
       pageTitle: '你的项目名 AI 开发任务控制台',
       consoleTitle: 'AI 开发任务控制台',
       consoleIntro: '这里用于收集本次任务变量，并生成可直接交给 AI 的执行入口。',
@@ -625,8 +621,6 @@
 
     const renderQuickGuide = () => {
       document.title = consoleConfig.pageTitle || document.title;
-      heroTitle.textContent = consoleConfig.heroTitle || heroTitle.textContent;
-      heroNote.textContent = consoleConfig.heroNote || heroNote.textContent;
       taskConsolePageTitle.textContent = consoleConfig.consoleTitle;
       taskConsoleIntro.textContent = consoleConfig.consoleIntro;
       quickGuideTitle.textContent = consoleConfig.quickGuideTitle;
