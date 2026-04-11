@@ -20,7 +20,7 @@
 2. 进入新项目目录
 3. 运行 `./scripts/init_project.sh`
 4. 按提示输入项目初始化信息
-5. 运行 `./scripts/verify_prompt_builder.sh`
+5. 等脚本自动完成验证
 6. 打开 `index.html`
 7. 用 `Design+Build` 发第一条真实任务
 
@@ -105,16 +105,11 @@ cd "$PROJECT_NAME"
 5. 写入控制台文档骨架
 6. 创建主工程目录（默认是 `app/`）
 7. 如果你填了远端仓库地址，就把 `origin` 改成新的仓库地址
+8. 自动执行一次 `./scripts/verify_prompt_builder.sh`
 
 也就是说，这一步之后，不应该还要求你再手动去改这些基础文件。
 
-### 第四步：执行验证
-
-初始化完成后，立刻执行：
-
-```bash
-./scripts/verify_prompt_builder.sh
-```
+### 第四步：等待脚本自动验证完成
 
 正常情况下，你会看到：
 
@@ -122,7 +117,7 @@ cd "$PROJECT_NAME"
 verify_prompt_builder: PASS
 ```
 
-这个验证现在会读取当前项目自己的配置，不再写死 starter 默认值。
+这个验证会在初始化脚本结束前自动执行，而且它现在会读取当前项目自己的配置，不再写死 starter 默认值。
 
 ### 第五步：打开控制台
 
@@ -187,7 +182,7 @@ index.html
 1. `git clone` 这个 starter
 2. 进入新项目目录
 3. 跑 `./scripts/init_project.sh`
-4. 跑 `./scripts/verify_prompt_builder.sh`
+4. 等初始化脚本自动完成验证
 5. 打开 `index.html`
 6. 用 `Design+Build` 发第一条任务
 

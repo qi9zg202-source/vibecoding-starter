@@ -326,11 +326,7 @@ ${secondaryObject ? `5. 第二对象：\`${secondaryObject}\`\n` : ''}${secondar
 
 ## 第一次使用
 
-1. 先执行：
-
-\`\`\`bash
-./scripts/verify_prompt_builder.sh
-\`\`\`
+1. 初始化脚本已经自动完成控制台验证。
 
 2. 打开：
 
@@ -351,6 +347,12 @@ index.html
 
 \`\`\`bash
 ./scripts/init_project.sh
+\`\`\`
+
+脚本结束前会自动再执行一次：
+
+\`\`\`bash
+./scripts/verify_prompt_builder.sh
 \`\`\`
 
 ## 建议的第一条任务
@@ -535,6 +537,9 @@ if [ -n "$REMOTE_URL" ] && git -C "$ROOT_DIR" rev-parse --is-inside-work-tree >/
   fi
 fi
 
+echo "开始执行初始化后的自动验证..."
+"$ROOT_DIR/scripts/verify_prompt_builder.sh"
+
 echo "初始化完成。"
 echo "项目代号: $PROJECT_NAME"
 echo "项目展示名称: $DISPLAY_NAME"
@@ -546,4 +551,4 @@ fi
 if [ -n "$REMOTE_URL" ]; then
   echo "远端仓库: $REMOTE_URL"
 fi
-echo "下一步建议：先执行 ./scripts/verify_prompt_builder.sh"
+echo "自动验证已完成。下一步可以直接打开 index.html 开始发任务。"

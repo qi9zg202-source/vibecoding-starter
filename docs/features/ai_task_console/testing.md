@@ -33,5 +33,5 @@
 2. 运行初始化脚本并传入新项目参数
 3. 确认 `vibecoding.config.js` 已替换成新项目值
 4. 确认 `README.md`、`CLAUDE.md`、`AGENTS.md` 已完成初始化
-5. 再执行一次 `./scripts/verify_prompt_builder.sh`
+5. 初始化脚本结束前会自动执行一次 `./scripts/verify_prompt_builder.sh`
 6. 最终结果必须为 `PASS`
