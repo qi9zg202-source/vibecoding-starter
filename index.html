@@ -520,6 +520,9 @@
           label: 'GitHub Publish',
           summary: '只做发布收尾。',
           skills: ['task-card-executor'],
+          fixedConstraints: [
+            '处理完所有 GitHub 业务后，本地恢复启动所有服务，保证最新版本可正确使用。',
+          ],
           instructions: [
             '确认当前变更已经完成验证。',
             '提交并推送当前变更。',
@@ -541,7 +544,7 @@
       modes: Array.isArray(rawConsoleConfig.modes) && rawConsoleConfig.modes.length ? rawConsoleConfig.modes : defaultConsoleConfig.modes,
     };
     const projectDefinitions = consoleConfig.projects.map((project) => ({ ...project, objects: Array.isArray(project.objects) ? project.objects : [] }));
-    const modeDefinitions = consoleConfig.modes.map((mode) => ({ ...mode, skills: Array.isArray(mode.skills) ? mode.skills : [], instructions: Array.isArray(mode.instructions) ? mode.instructions : [], deliverables: Array.isArray(mode.deliverables) ? mode.deliverables : [] }));
+    const modeDefinitions = consoleConfig.modes.map((mode) => ({ ...mode, skills: Array.isArray(mode.skills) ? mode.skills : [], fixedConstraints: Array.isArray(mode.fixedConstraints) ? mode.fixedConstraints : [], instructions: Array.isArray(mode.instructions) ? mode.instructions : [], deliverables: Array.isArray(mode.deliverables) ? mode.deliverables : [] }));
     const projectConfigs = Object.fromEntries(projectDefinitions.map((project) => [project.key, project]));
     const modeConfigs = Object.fromEntries(modeDefinitions.map((mode) => [mode.key, mode]));
     const fixedProtocolLines = consoleConfig.fixedProtocolLines;
@@ -616,7 +619,7 @@
     };
 
     const getSelectedProjectConfig = () => projectConfigs[selectedProjectKey] || projectDefinitions[0] || { name: '当前工程', switchText: '', objects: [] };
-    const getSelectedModeConfig = () => modeConfigs[selectedModeKey] || modeDefinitions[0] || { label: 'Design+Build', summary: '', skills: [], instructions: [], deliverables: [] };
+    const getSelectedModeConfig = () => modeConfigs[selectedModeKey] || modeDefinitions[0] || { label: 'Design+Build', summary: '', skills: [], fixedConstraints: [], instructions: [], deliverables: [] };
     const getSelectedTaskObjects = () => getTaskObjectRows().filter((row) => row.classList.contains('is-selected')).map((row) => String(row.dataset.objectText || '').trim()).filter(Boolean);
 
     const renderQuickGuide = () => {
@@ -717,18 +720,20 @@
     const getConsoleState = () => {
       const projectConfig = getSelectedProjectConfig();
       const modeConfig = getSelectedModeConfig();
+      const inputConstraintLines = splitLines(taskConsoleGuardInput.value).length ? splitLines(taskConsoleGuardInput.value) : ['保持现有信息架构、路由与非目标功能不变'];
       return {
         projectName: projectConfig.name || '当前工程',
         projectSwitchText: projectConfig.switchText || '',
         modeLabel: modeConfig.label,
         modeSummary: modeConfig.summary,
         skills: modeConfig.skills,
+        fixedConstraints: modeConfig.fixedConstraints,
         instructions: modeConfig.instructions,
         deliverables: modeConfig.deliverables,
         taskText: normalizeText(taskConsoleTaskInput.value) || '“请在这里输入本次需求内容”',
         objectLines: getSelectedTaskObjects(),
         priorityText: normalizeText(taskConsolePriorityInput.value) || '普通优先级，按当前模式执行',
-        constraintLines: splitLines(taskConsoleGuardInput.value).length ? splitLines(taskConsoleGuardInput.value) : ['保持现有信息架构、路由与非目标功能不变'],
+        constraintLines: [...inputConstraintLines, ...modeConfig.fixedConstraints],
         acceptanceLines: splitLines(taskConsoleAcceptanceInput.value).length ? splitLines(taskConsoleAcceptanceInput.value) : ['按固定完成标准执行，并完成当前模式对应的交付物验证'],
       };
     };

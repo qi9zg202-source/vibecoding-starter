@@ -87,6 +87,8 @@ const assert = (condition, message) => {
   await wait(0);
   const publishState = summarize();
   assert(publishState.executionPrompt.includes('主分支收敛'), 'starter GitHub Publish 输出缺少主分支收敛');
+  assert(publishState.executionPrompt.includes('本地恢复启动所有服务'), 'starter GitHub Publish 输出缺少服务恢复固定约束');
+  assert(publishState.taskCard.includes('本地恢复启动所有服务'), 'starter GitHub Publish Task Card 缺少服务恢复固定约束');
 
   document.querySelector('[data-project-key="main-app"]')?.click();
   const adminRow = Array.from(document.querySelectorAll('#task-object-table .prompt-object-row')).find((row) => row.dataset.objectText === 'http://localhost:3000/admin');

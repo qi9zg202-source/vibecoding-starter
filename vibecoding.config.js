@@ -90,6 +90,9 @@ window.VIBECODING_CONFIG = {
       label: 'GitHub Publish',
       summary: '只做发布收尾。',
       skills: ['task-card-executor'],
+      fixedConstraints: [
+        '处理完所有 GitHub 业务后，本地恢复启动所有服务，保证最新版本可正确使用。',
+      ],
       instructions: [
         '确认当前变更已经完成验证。',
         '提交并推送当前变更。',
