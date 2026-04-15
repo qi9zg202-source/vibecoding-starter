@@ -53,6 +53,7 @@ const assert = (condition, message) => {
   assert(articleOrder[2] === 'task-mode-box', 'starter 模式区块顺序错误');
   assert(document.getElementById('advanced-output-box')?.open === false, 'starter 高级输出区不应默认展开');
   assert(document.getElementById('special-templates-box')?.open === false, 'starter 专项模板区不应默认展开');
+  assert(text(document.getElementById('control-protocol-box')).includes('自动提 pull request'), 'starter 固定协议缺少自动提 PR / merge 要求');
 
   const summarize = () => ({
     project: document.querySelector('#project-switch-box .prompt-line-btn.is-selected')?.dataset.projectKey || '',
@@ -88,7 +89,9 @@ const assert = (condition, message) => {
   const publishState = summarize();
   assert(publishState.executionPrompt.includes('主分支收敛'), 'starter GitHub Publish 输出缺少主分支收敛');
   assert(publishState.executionPrompt.includes('本地恢复启动所有服务'), 'starter GitHub Publish 输出缺少服务恢复固定约束');
+  assert(publishState.executionPrompt.includes('自动提 pull request'), 'starter GitHub Publish 输出缺少自动提 PR / merge 要求');
   assert(publishState.taskCard.includes('本地恢复启动所有服务'), 'starter GitHub Publish Task Card 缺少服务恢复固定约束');
+  assert(publishState.taskCard.includes('自动提 pull request'), 'starter GitHub Publish Task Card 缺少自动提 PR / merge 要求');
 
   document.querySelector('[data-project-key="main-app"]')?.click();
   const adminRow = Array.from(document.querySelectorAll('#task-object-table .prompt-object-row')).find((row) => row.dataset.objectText === 'http://localhost:3000/admin');

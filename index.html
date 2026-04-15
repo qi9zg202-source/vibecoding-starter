@@ -447,6 +447,7 @@
       fixedProtocolLines: [
         '所有设计实现都先 plan。',
         'plan 完成后先更新设计文档和测试文档。',
+        '凡是进入发布收尾任务，执行完本次开发任务后，自动提 pull request、自动 merge，不用用户自己手动操作。',
         '再进行实现，并在完成后做实际验证。',
       ],
       baseExecutionPrefix: `所有开发遵循项目规范,先读取仓库根目录的 CLAUDE.md。
@@ -522,10 +523,12 @@
           skills: ['task-card-executor'],
           fixedConstraints: [
             '处理完所有 GitHub 业务后，本地恢复启动所有服务，保证最新版本可正确使用。',
+            '执行完本次开发任务后，自动提 pull request、自动 merge，不用用户自己手动操作。',
           ],
           instructions: [
             '确认当前变更已经完成验证。',
             '提交并推送当前变更。',
+            '执行完本次开发任务后，自动提 pull request、自动 merge，不用用户自己手动操作。',
             '执行主分支收敛，并保持本地与 GitHub 一致。',
           ],
           deliverables: ['git_commit', 'git_push', 'main_sync', 'publish_verification'],
